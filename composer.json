@@ -1,0 +1,37 @@
+{
+  "name": "hamlet-framework/http-swoole",
+  "type": "framework",
+  "description": "Hamlet Framework / HTTP / Swoole",
+  "keywords": ["framework", "swoole"],
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Vasily Kartashov",
+      "email": "info@kartashov.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "config": {
+    "discard-changes": true,
+    "optimize-autoloader": true,
+    "classmap-authoritative": true,
+    "sort-packages": true
+  },
+  "require": {
+    "php": "^7.2",
+    "hamlet-framework/http": "dev-master"
+  },
+  "require-dev": {
+    "swoft/swoole-ide-helper": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Hamlet\\Http\\Swoole\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Hamlet\\Http\\Swoole\\": "tests"
+    }
+  }
+}
