@@ -1,6 +1,6 @@
 <?php
 
-namespace Hamlet\Bootstraps;
+namespace Hamlet\Http\Swoole\Bootstraps;
 
 use Hamlet\Http\Applications\AbstractApplication;
 use Hamlet\Http\Swoole\Requests\Request;
