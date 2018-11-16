@@ -19,9 +19,9 @@ class Request extends \Hamlet\Http\Requests\Request
         $instance = new static;
 
         $instance->properties['method']          = strtoupper($request->server['request_method'] ?? 'GET');
-        $instance->properties['cookieParams']    = &$request->cookie;
-        $instance->properties['queryParams']     = &$request->get;
-        $instance->properties['parsedBody']      = &$request->post;
+        $instance->properties['cookieParams']    = $request->cookie ?? [];
+        $instance->properties['queryParams']     = $request->get ?? [];
+        $instance->properties['parsedBody']      = $request->post ?? [];
         $instance->properties['path']            = strtok((string) $request->server['request_uri'], '?') ?: null;
 
         $instance->generators['serverParams']    = [[&$instance, 'readServerParamsFromRequest'], &$request];
