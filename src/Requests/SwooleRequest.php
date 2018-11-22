@@ -2,44 +2,67 @@
 
 namespace Hamlet\Http\Swoole\Requests;
 
+use Hamlet\Http\Message\ServerRequest;
 use Hamlet\Http\Message\Stream;
 use Hamlet\Http\Message\Uri;
+use Hamlet\Http\Requests\Request;
 use Hamlet\Http\Requests\RequestTrait;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
-use SessionHandlerInterface;
 use swoole_http_request;
 
-class Request extends \Hamlet\Http\Requests\Request
+class SwooleRequest extends ServerRequest implements Request
 {
     use RequestTrait;
 
-    public static function fromSwooleRequest(swoole_http_request $request, ?SessionHandlerInterface $sessionHandler = null): self
+    /** @var string|null */
+    protected $path;
+
+    public function __construct(swoole_http_request $request)
     {
-        $instance = new static;
+        $this->method          = strtoupper($request->server['request_method'] ?? 'GET');
+        $this->cookieParams    = $request->cookie ?? [];
+        $this->queryParams     = $request->get ?? [];
+        $this->parsedBody      = $request->post ?? [];
+        $this->path            = strtok((string) $request->server['request_uri'], '?') ?: null;
 
-        $instance->properties['method']          = strtoupper($request->server['request_method'] ?? 'GET');
-        $instance->properties['cookieParams']    = $request->cookie ?? [];
-        $instance->properties['queryParams']     = $request->get ?? [];
-        $instance->properties['parsedBody']      = $request->post ?? [];
-        $instance->properties['path']            = strtok((string) $request->server['request_uri'], '?') ?: null;
+        $this->serverParamsGenerator = function () use ($request) {
+            return $this->readServerParametersFromRequest($request);
+        };
+        $this->protocolVersionGenerator = function () use ($request) {
+            return $this->readProtocolVersionFromRequest($request);
+        };
+        $this->bodyGenerator = function () use ($request) {
+            return $this->readBodyFromRequest($request);
+        };
+        $this->headersGenerator = function () use ($request) {
+            return $this->readHeadersFromRequest($request);
+        };
+        $this->uriGenerator = function () use ($request) {
+            return $this->readUriFromRequest($request);
+        };
+        $this->uploadedFilesGenerator = function () use ($request) {
+            return $this->readUploadedFilesFromRequest($request);
+        };
+    }
 
-        $instance->generators['serverParams']    = [[&$instance, 'readServerParamsFromRequest'], &$request];
-        $instance->generators['protocolVersion'] = [[&$instance, 'readProtocolVersionFromRequest'], &$request];
-        $instance->generators['body']            = [[&$instance, 'readBodyFromRequest'], &$request];
-        $instance->generators['headers']         = [[&$instance, 'readHeadersFromServerParams'], &$request];
-        $instance->generators['uri']             = [[&$instance, 'readUriFromRequest'], &$request];
-        $instance->generators['sessionParams']   = [[&$instance, 'readSessionParamsFromRequest'], &$request, &$sessionHandler];
-
-        // @todo
-        $instance->generators['uploadedFiles']   = [[&$instance, 'readUploadedFiles'], &$request];
-
-        return $instance;
+    public function getPath(): string
+    {
+        if ($this->path === null) {
+            $this->path = $this->getUri()->getPath();
+        }
+        return $this->path;
     }
 
     protected function readHeadersFromRequest(swoole_http_request $request)
     {
         // @todo $swooleRequest->header;
+        return [];
+    }
+
+    protected function readUploadedFilesFromRequest(swoole_http_request $request)
+    {
+        // @todo fix
         return [];
     }
 
@@ -51,22 +74,6 @@ class Request extends \Hamlet\Http\Requests\Request
     protected function readProtocolVersionFromRequest(swoole_http_request $request): ?string
     {
         return $swooleRequest->server['server_protocol'] ?? null;
-    }
-
-    protected function readSessionParamsFromRequest(swoole_http_request $request, ?SessionHandlerInterface $sessionHandler): ?array
-    {
-        if ($sessionHandler === null) {
-            return null;
-        }
-        $sessionName = session_name();
-        if (isset($swooleRequest->cookie[$sessionName])) {
-            $sessionId = $request->cookie[session_name()];
-            $data = $sessionHandler->read($sessionId);
-            if (!empty($data)) {
-                return unserialize($data);
-            }
-        }
-        return [];
     }
 
     protected function readServerParametersFromRequest(swoole_http_request $request): array

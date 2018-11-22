@@ -3,7 +3,7 @@
 namespace Hamlet\Http\Swoole\Bootstraps;
 
 use Hamlet\Http\Applications\AbstractApplication;
-use Hamlet\Http\Swoole\Requests\Request;
+use Hamlet\Http\Swoole\Requests\SwooleRequest;
 use Hamlet\Http\Swoole\Writers\SwooleResponseWriter;
 use swoole_http_request;
 use swoole_http_response;
@@ -30,9 +30,10 @@ final class SwooleBootstrap
         ]);
 
         $server->on('request', function (swoole_http_request $swooleRequest, swoole_http_response $swooleResponse) use ($application) {
-            $request = Request::fromSwooleRequest($swooleRequest, $application->sessionHandler());
-            $writer = new SwooleResponseWriter($swooleResponse, $application->sessionHandler());
+            $request  = new SwooleRequest($swooleRequest);
+            $writer   = new SwooleResponseWriter($swooleResponse);
             $response = $application->run($request);
+
             $application->output($request, $response, $writer);
         });
         $server->start();
