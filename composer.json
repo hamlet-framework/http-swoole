@@ -18,12 +18,12 @@
     "sort-packages": true
   },
   "require": {
-    "php": "^7.2",
-    "ext-swoole": "*",
+    "php": "^7",
+    "ext-swoole": "@stable",
     "hamlet-framework/http": "dev-master"
   },
   "require-dev": {
-    "swoft/swoole-ide-helper": "dev-master"
+    "swoft/swoole-ide-helper": "@stable"
   },
   "autoload": {
     "psr-4": {

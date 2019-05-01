@@ -1,8 +1,4 @@
-Hamlet Framework / DB / MySQL
+Hamlet Framework / Http / Swoole
 ===
 
 
-## ToDo
-
-- Add docker for simple testing
-- Add realistic test case for AMP and Swoole
