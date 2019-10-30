@@ -11,6 +11,9 @@ use swoole_http_server;
 
 final class SwooleBootstrap
 {
+    /** @var AbstractApplication|null */
+    private static $application;
+
     private function __construct()
     {
     }
@@ -18,23 +21,32 @@ final class SwooleBootstrap
     /**
      * @param string $host
      * @param int $port
-     * @param AbstractApplication $application
+     * @param callable $generator
+     * @psalm-param callable():AbstractApplication $generator
      * @return void
      */
-    public static function run(string $host, int $port, AbstractApplication $application)
+    public static function run(string $host, int $port, callable $generator)
     {
         $server = new swoole_http_server($host, $port, SWOOLE_BASE);
         $server->set([
             'worker_num' => swoole_cpu_num()
         ]);
 
-        $server->on('request', function (swoole_http_request $swooleRequest, swoole_http_response $swooleResponse) use ($application) {
+        $server->on('workerStart', function () use ($generator) {
+            self::$application = $generator();
+        });
+
+        $server->on('request', function (swoole_http_request $swooleRequest, swoole_http_response $swooleResponse) {
+            if (self::$application === null) {
+                return;
+            }
             $request  = new SwooleRequest($swooleRequest);
             $writer   = new SwooleResponseWriter($swooleResponse);
-            $response = $application->run($request);
+            $response = self::$application->run($request);
 
-            $application->output($request, $response, $writer);
+            self::$application->output($request, $response, $writer);
         });
+
         $server->start();
     }
 }

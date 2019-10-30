@@ -15,12 +15,12 @@ class SwooleResponseWriter implements ResponseWriter
         $this->response = $response;
     }
 
-    public function status(int $code, string $line = null): void
+    public function status(int $code, string $line = null)
     {
         $this->response->status((string) $code, $line);
     }
 
-    public function header(string $key, string $value): void
+    public function header(string $key, string $value)
     {
         // @bug not sure but for whatever reason swoole dislikes this header
         if (strtolower($key) == 'content-length') {
@@ -29,17 +29,17 @@ class SwooleResponseWriter implements ResponseWriter
         $this->response->header($key, $value);
     }
 
-    public function writeAndEnd(string $payload): void
+    public function writeAndEnd(string $payload)
     {
         $this->response->end($payload);
     }
 
-    public function end(): void
+    public function end()
     {
         $this->response->end();
     }
 
-    public function cookie(string $name, string $value, int $expires, string $path, string $domain = '', bool $secure = false, bool $httpOnly = false): void
+    public function cookie(string $name, string $value, int $expires, string $path, string $domain = '', bool $secure = false, bool $httpOnly = false)
     {
         $this->response->cookie($name, $value, $expires, $path, $domain, $secure, $httpOnly);
     }
