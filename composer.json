@@ -23,7 +23,7 @@
     "hamlet-framework/http": "dev-master"
   },
   "require-dev": {
-    "swoft/swoole-ide-helper": "@stable"
+    "swoole/ide-helper": "@stable"
   },
   "autoload": {
     "psr-4": {

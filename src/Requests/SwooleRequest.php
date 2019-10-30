@@ -20,6 +20,8 @@ class SwooleRequest extends ServerRequest implements Request
 
     public function __construct(swoole_http_request $request)
     {
+        parent::__construct();
+
         $this->method          = strtoupper($request->server['request_method'] ?? 'GET');
         $this->cookieParams    = $request->cookie ?? [];
         $this->queryParams     = $request->get ?? [];
