@@ -17,7 +17,7 @@ class SwooleResponseWriter implements ResponseWriter
 
     public function status(int $code, string $line = null)
     {
-        $this->response->status((string) $code, $line);
+        $this->response->status((string) $code);
     }
 
     public function header(string $key, string $value)
