@@ -19,19 +19,21 @@ final class SwooleBootstrap
      * @param string $host
      * @param int $port
      * @param AbstractApplication $application
-     * @param callable|null $onWorkerStart
+     * @param WorkerInitializable[] $services
      * @return void
      */
-    public static function run(string $host, int $port, AbstractApplication $application, callable $onWorkerStart = null)
+    public static function run(string $host, int $port, AbstractApplication $application, WorkerInitializable ...$services)
     {
         $server = new swoole_http_server($host, $port, SWOOLE_BASE);
         $server->set([
             'worker_num' => swoole_cpu_num()
         ]);
 
-        if ($onWorkerStart) {
-            $server->on('WorkerStart', function (swoole_http_server $server) use ($onWorkerStart) {
-                $onWorkerStart();
+        if ($services) {
+            $server->on('WorkerStart', function (swoole_http_server $server) use ($services) {
+                foreach ($services as $service) {
+                    $service->init();
+                }
             });
         }
 
