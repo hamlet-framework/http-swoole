@@ -10,8 +10,8 @@ php:
   - '8.0'
 
 before_script:
-  - composer update
   - pecl install swoole
+  - composer update
 
 script:
   - ./vendor/bin/parallel-lint src
