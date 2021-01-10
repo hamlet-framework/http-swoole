@@ -11,6 +11,7 @@ php:
 
 before_script:
   - composer update
+  - pecl install swoole
 
 script:
   - ./vendor/bin/parallel-lint src
