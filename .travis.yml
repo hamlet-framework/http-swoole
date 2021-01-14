@@ -10,9 +10,9 @@ php:
   - '8.0'
 
 before_script:
-  - php -v | grep -q 'PHP 7.0' || printf "\n \n \n \n \n" | pecl install swoole
+  - php -v | grep -qe 'PHP 7\.[01]' || printf "\n \n \n \n \n" | pecl install swoole
   - composer update
 
 script:
-  - php -v | grep -q 'PHP 7.0' || ./vendor/bin/parallel-lint src
+  - php -v | grep -qe 'PHP 7\.[01]' || ./vendor/bin/parallel-lint src
   - ./vendor/bin/phpcs --standard=PSR2 -n src
