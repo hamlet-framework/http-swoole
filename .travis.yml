@@ -2,17 +2,15 @@ language: php
 sudo: false
 
 php:
-  - '7.0'
-  - '7.1'
   - '7.2'
   - '7.3'
   - '7.4'
   - '8.0'
 
 before_script:
-  - php -v | grep -qe 'PHP 7\.[01]' || printf "\n \n \n \n \n" | pecl install swoole
+  - printf "\n \n \n \n \n" | pecl install swoole
   - composer update
 
 script:
-  - php -v | grep -qe 'PHP 7\.[01]' || ./vendor/bin/parallel-lint src
+  - ./vendor/bin/parallel-lint src
   - ./vendor/bin/phpcs --standard=PSR2 -n src
