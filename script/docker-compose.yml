@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  app:
+    image: phpswoole/swoole
+    volumes:
+      - ../src:/src
+      - ../vendor:/vendor
+      - ./app:/var/www
+    ports:
+      - 9501:9501
