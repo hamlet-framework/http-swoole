@@ -24,6 +24,7 @@
   "require-dev": {
     "swoole/ide-helper": "@stable",
     "squizlabs/php_codesniffer": "@stable",
+    "cache/array-adapter": "@stable",
     "php-parallel-lint/php-parallel-lint": "@stable",
     "vimeo/psalm": "@stable"
   },

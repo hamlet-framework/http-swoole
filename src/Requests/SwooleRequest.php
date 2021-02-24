@@ -58,19 +58,19 @@ class SwooleRequest extends ServerRequest implements Request
 
     protected function readHeadersFromRequest(swoole_http_request $request)
     {
-        // @todo $swooleRequest->header;
-        return [];
+        return $request->header;
     }
 
-    protected function readUploadedFilesFromRequest(swoole_http_request $request)
+    protected function readUploadedFilesFromRequest(swoole_http_request $request): array
     {
-        // @todo fix
+        // @todo normalize files
         return [];
     }
 
     protected function readBodyFromRequest(swoole_http_request $request): StreamInterface
     {
-        return Stream::fromString($request->rawcontent());
+        print_r($request->rawContent());
+        return Stream::fromString($request->rawContent());
     }
 
     protected function readProtocolVersionFromRequest(swoole_http_request $request): ?string
